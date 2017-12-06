@@ -3,6 +3,7 @@ const config = require('../config.json');
 const pkg = require('../package.json');
 const owting = require('owting');
 const routes = require('./routes');
+const db = require('./db-postgres');
 
 owting.on();
 
