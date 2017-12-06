@@ -17,8 +17,10 @@ const create = async (request, out) => {
     }).code(500);
   }
 
+  let response = null;
+
   try {
-    let response = await db.pool.query(
+    response = await db.pool.query(
       db.squel.insert()
         .into('users')
         .set('username', model.username)
@@ -29,15 +31,6 @@ const create = async (request, out) => {
         .returning('id')
         .toString()
     );
-
-    model.id = response.rows[0].id;
-    
-    delete model.password;
-    delete model.password_hash;
-
-    console.log('User created', model);
-
-    return out.response(model);
   }
   catch (exception) {
     let exm = 'Unable to create user';
@@ -48,12 +41,23 @@ const create = async (request, out) => {
       exception: exception.detail || exception.message
     }).code(exception.detail ? 400 : 500);
   }
+  
+  model.id = response.rows[0].id;
+  
+  delete model.password;
+  delete model.password_hash;
+
+  console.log('User created', model);
+
+  return out.response(model);
 
 };
 
 const list = async (request, out) => {
+  let response = null;
+
   try {
-    let response = await db.pool.query(
+    response = await db.pool.query(
       db.squel.select()
         .from('users')
         .field('id')
@@ -63,8 +67,6 @@ const list = async (request, out) => {
         .field('email')
         .toString()
     );
-
-    return out.response(response.rows);
   }
   catch (exception) {
     let exm = 'Unable to list users';
@@ -75,11 +77,15 @@ const list = async (request, out) => {
       exception: exception.detail || exception.message
     }).code(exception.detail ? 400 : 500);
   }
+  
+  return out.response(response.rows);
 };
 
 const get = async (request, out) => {
+  let response = null;
+
   try {
-    let response = await db.pool.query(
+    response = await db.pool.query(
       db.squel.select()
         .from('users')
         .field('id')
@@ -90,12 +96,6 @@ const get = async (request, out) => {
         .where('id = ?', request.params.id)
         .toString()
     );
-
-    return response.rows[0]
-      ? out.response(response.rows[0])
-      : out.response({
-        message: `Unable to find user [${request.params.id}]`
-      }).code(404);
   }
   catch (exception) {
     let exm = `Unable to get user [${request.params.id}]`;
@@ -106,6 +106,12 @@ const get = async (request, out) => {
       exception: exception.detail || exception.message
     }).code(exception.detail ? 400 : 500);
   }
+  
+  return response.rows[0]
+    ? out.response(response.rows[0])
+    : out.response({
+      message: `Unable to find user [${request.params.id}]`
+    }).code(404);
 };
 
 const update = async (request, out) => {
@@ -140,10 +146,6 @@ const update = async (request, out) => {
         .toString());
 
     model = Object.assign(model, response.rows[0]);
-
-    delete model.password;
-
-    return out.response(model);
   }
   catch (exception) {
     let exm = `Unable to get user [${request.params.id}]`;
@@ -154,25 +156,22 @@ const update = async (request, out) => {
       exception: exception.detail || exception.message
     }).code(exception.detail ? 400 : 500);
   }
+  
+  delete model.password;
+
+  return out.response(model);
 };
 
 const remove = async (request, out) => {
+  let response = null;
+
   try {
-    let response = await db.pool.query(
+    response = await db.pool.query(
       db.squel.delete()
         .from('users')
         .where('id = ?', request.params.id)
         .toString()
     );
-
-    if (response.rowCount === 1) {
-      return out.response().code(204);
-    }
-    else {
-      return out.response({
-        message: `Unable to find user [${request.params.id}]`
-      }).code(404);
-    }
   }
   catch (exception) {
     let exm = 'Unable to delete user';
@@ -182,6 +181,15 @@ const remove = async (request, out) => {
       message: exm,
       exception: exception.detail || exception.message
     }).code(exception.detail ? 400 : 500);
+  }
+
+  if (response.rowCount === 1) {
+    return out.response().code(204);
+  }
+  else {
+    return out.response({
+      message: `Unable to find user [${request.params.id}]`
+    }).code(404);
   }
 };
 
