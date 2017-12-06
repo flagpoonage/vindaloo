@@ -1,0 +1,53 @@
+{
+  "handlers": "./",
+  "map": [
+    {
+      "method": "GET",
+      "handler": "handlers/default"
+    },
+    {
+      "set": "api",
+      "base": "api",
+      "routes": [
+        {
+          "set": "users",
+          "base": "users",
+          "routes": [
+            {
+              "method": "GET",
+              "authenticate": false,
+              "handler": "api/users.list"
+            },
+            {
+              "method": "GET",
+              "path": "{id}",
+              "authenticate": true,
+              "handler": "api/users.get"
+            },
+            {
+              "method": "PUT",
+              "path": "{id}",
+              "authenticate": true,
+              "authorization": [
+                ["UPDATE_USERS", "UPDATE_ME"]
+              ],
+              "handler": "api/users.update"
+            },
+            {
+              "method": "POST",
+              "handler": "api/users.create"
+            },
+            {
+              "method": "DELETE",
+              "path": "{id}",
+              "authorization": [
+                ["DELETE_USERS", "DELETE_ME"]
+              ],
+              "handler": "api/users.remove"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -2,8 +2,7 @@ const Hapi = require('hapi');
 const config = require('../config.json');
 const pkg = require('../package.json');
 const owting = require('owting');
-const routes = require('./routes');
-const db = require('./db-postgres');
+const router = require('./router');
 
 owting.on();
 
@@ -38,7 +37,17 @@ server.app.version = `v${pkg.version}`;
     return console.error(ex);
   }
 
-  console.log('Routes', ...routes.map(route => `${route.method} ${route.path}`));
+  let routes = [];
+
+  try {
+    routes = router.generateRoutes(require('./routes.json'));
+  }
+  catch (exception) {
+    console.error('Unable to create router', exception);
+    process.exit(1);
+  }
+
+  console.log('Routes', routes.map(route => `${route.method} ${route.path}`));
 
   routes.forEach(route => server.route(route));
 
