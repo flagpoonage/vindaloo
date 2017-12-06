@@ -29,7 +29,10 @@
               "path": "{id}",
               "authenticate": true,
               "authorization": [
-                ["UPDATE_USERS", "UPDATE_ME"]
+                [
+                  "UPDATE_USERS", 
+                  "UPDATE_ME"
+                ]
               ],
               "handler": "api/users.update"
             },
@@ -41,7 +44,10 @@
               "method": "DELETE",
               "path": "{id}",
               "authorization": [
-                ["DELETE_USERS", "DELETE_ME"]
+                [
+                  "DELETE_USERS", 
+                  "DELETE_ME"
+                ]
               ],
               "handler": "api/users.remove"
             }
