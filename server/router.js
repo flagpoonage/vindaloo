@@ -56,7 +56,6 @@ const unwrapRoute = (base_handler_path, base_route_path, route) => {
   let handler = fetchRouteHandler(base_handler_path, route);
 
   const checkAuthorizationTokens = routes => {
-    console.log('routes', routes);
     routes.forEach(token => {
       if (typeof token !== 'string' && !Array.isArray(token)) {
         throw new RouteError('The `authorize` property may only contain authorization flags and nested arrays', route);
@@ -110,7 +109,6 @@ let route_table = [];
 
 const generateRouteSet = (name, base, routes, handlers) => {
   let true_routes = [];
-  let log_routes = [];
 
   routes.forEach(route => {
     let base_route_path = base ? `${base}/${route.base}` : `/${route.base}`;
@@ -120,13 +118,8 @@ const generateRouteSet = (name, base, routes, handlers) => {
     }
     else {
       true_routes.push(unwrapRoute(handlers, base, route));
-      log_routes.push(route);
     }
   });
-
-  if (log_routes.length > 0) {
-    console.log(`Route set [${name}] at [${base}]`, log_routes);
-  }
   
   return true_routes;
 };

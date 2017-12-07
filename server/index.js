@@ -3,6 +3,7 @@ const config = require('../config.json');
 const pkg = require('../package.json');
 const owting = require('owting');
 const router = require('./router');
+const mongo = require('./db-mongo');
 
 owting.on();
 
@@ -29,12 +30,28 @@ server.app.version = `v${pkg.version}`;
     },
     path: './views'
   });
+  
+  server.state('session', {
+    ttl: null,
+    isSecure: false,
+    isHttpOnly: true,
+    encoding: 'none',
+    clearInvalid: true, // remove invalid cookies
+    strictHeader: true // don't allow violations of RFC 6265
+  });
+
+  try {
+    await mongo.connect();
+  }
+  catch (exception) {
+    return console.error('Unable to open connection to mongo', exception);
+  }
 
   try {
     await server.start();
   }
   catch (ex) {
-    return console.error(ex);
+    return console.error('Unable to start web server', ex);
   }
 
   let routes = [];

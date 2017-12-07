@@ -10,6 +10,16 @@
       "base": "api",
       "routes": [
         {
+          "set": "auth",
+          "base": "auth",
+          "routes": [
+            {
+              "method": "POST",
+              "handler": "api/auth.authenticate"
+            }
+          ]
+        },
+        {
           "set": "users",
           "base": "users",
           "routes": [
