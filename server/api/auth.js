@@ -5,8 +5,6 @@ const bcrypt = require('bcrypt');
 const authenticate = async (request, out) => {
   let user = null;
 
-  console.log('Current user session', request.session);
-
   try {
     let response = await db.pool.query(
       db.squel.select()
