@@ -1,17 +1,21 @@
-const db = require('./db-mongo').getInstance();
-// const ObjectId = require('mongodb').ObjectId;
+const mongo = require('./db-mongo');
+const OWTJ = require('owtj');
+const uuid = require('uuid/v4');
 
-// console.log('oid', ObjectId);
+const db = () => mongo.getInstance();
 
 const create = async (content) => {
-  let result = await db.collection('sessions').insert(content);
-  let token = result.insertedIds[0].toHexString();
 
-  return token;
+  content.session_key = uuid();
+
+  await db().collection('sessions').insert(content);
+
+  return content.session_key;
 };
 
 const read = async (token) => {
-
+  let result = db().collection('sessions').findOne({ session_key: token });
+  return result;
 };
 
 const update = async (token, content) => {

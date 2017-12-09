@@ -10,7 +10,7 @@ class RouteError extends Error {
 
 // Verifies that the request contains the authenticated flag.
 const checkAuthentication = request => {
-  if (request.authenticated) {
+  if (request.session) {
     return true;
   }
 };

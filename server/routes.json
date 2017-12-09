@@ -25,7 +25,7 @@
           "routes": [
             {
               "method": "GET",
-              "authenticate": false,
+              "authenticate": true,
               "handler": "api/users.list"
             },
             {
